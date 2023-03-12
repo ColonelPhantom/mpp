@@ -1,6 +1,6 @@
 mpp = {}
 
-mpp.c = require "c"
+mpp.c = require "mpp.c"
 
 local function process(file)
     local f = assert(io.open(file, "r"))
@@ -100,5 +100,3 @@ end
 
 
 mpp.directive = "@"
--- mpp.execute{ "examples/template.c" }
-mpp.execute{"examples/linkedlist.c"}

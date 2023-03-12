@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+
+@mpp.c.struct("stats")
+@function counter(name) stats[name] = "size_t " .. name end
+struct stats stats;
+
+@function sum_t(type, base)
+    @local base = base or 0
+    $type$ sum_$type$($type$ *xs, size_t len) {
+        $type$ sum = $base$;
+        for(size_t i = 0; i < len; i++) {
+            @counter("summed" .. type)
+            stats.summed$type$++;
+            sum += xs[i];
+        }
+        return sum;
+    }
+@end
+
+@sum_t("int")
+@sum_t("float")
+
+int main() {
+    int xs[3] = {1, strlen("foo"), strlen("bar")};
+    int x = sum_int(xs, 3);
+    float ys[3] = {1.0, 3.14, 9.81};
+    float y = sum_float(ys, 3);
+    printf("%i %f\n", x, y);
+    return 0;
+}
+ 

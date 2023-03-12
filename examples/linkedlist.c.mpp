@@ -1,0 +1,49 @@
+#include <stdlib.h>
+
+@function linkedlist(T, plugins)
+    @local l = mpp.c.struct("linkedlist_" .. T)
+    @local hooks = mpp.hooks()
+    @l.value = T.." value"
+    @l.next = tostring(l) .. " *next"
+
+    $T$ *ll_$T$_index(struct linkedlist_$T$ *list, size_t index) {
+        while(index > 0) {
+            if(!list->next) {
+                return NULL;
+            } else {
+                list = list->next;
+            }
+        }
+        return &list->value;
+    }
+
+    struct linkedlist_$T$ ll_$T$_cons($T$ value, struct linkedlist_$T$ *tail) {
+        struct linkedlist_$T$ l;
+        l.value = value;
+        l.next = tail;
+        @hooks("cons")
+        return l;
+    }
+    @for _,plugin in ipairs(plugins or {}) do plugin(T, l, hooks) end
+@end
+
+@function linkedlist_len_naive(T, l, hooks)
+    size_t ll_$T$_len(struct linkedlist_$T$ *list) {
+        size_t len = 0;
+        for(; list; len++) {
+            list = list->next;
+        }
+        return len;
+    }
+@end
+
+@function linkedlist_len_cached(T, l, hooks)
+    @l.size = "size_t size"
+    @hooks.cons("l.size = tail ? tail->size + 1 : 1;")
+    size_t ll_$T$_len(struct linkedlist_$T$ *list) {
+        return list->size;
+    }
+@end
+
+@linkedlist("int", {linkedlist_len_naive})
+@linkedlist("float", {linkedlist_len_cached})

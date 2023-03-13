@@ -39,8 +39,8 @@ int evaluate(char op, int a, int b) {
     return 0;
 }
 // Inject addition and multiplication into hook
-@hooks.eval("case '+': return a+b")
-@hooks.eval("case '*': return a*b")
+@hooks.eval("case '+': return a+b;")
+@hooks.eval("case '*': return a*b;")
 ```
 By putting the hook calls into separate modules and functions, it is possible to increase the locality of behaviour. Imagine a real programming language, which needs operators to be added in multiple places (such as the parser and the interpreter).
 
